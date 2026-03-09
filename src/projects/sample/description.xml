@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ldap host="ldap.my-corp.org" port="389" bind_dn="cn=manager,dc=my-corp,dc=org" bind_password="" phpNamespace="sample">    
+	<object ou="ou=people,dc=my-corp,dc=org" filter="(personType=staff)" phpObjectName="Staff" phpManagerName="StaffManager">
+		<attribute name="uid" rdn="true" phpAttributeName="login" />
+		<attribute name="empId" phpAttributeName="employeeNumber" />
+		<attribute name="sn" phpAttributeName="name" />
+		<attribute name="givenName" phpAttributeName="firstname" />
+		<attribute name="displayName" />
+		<attribute name="mail" />
+		<attribute name="affectations" multi="true" phpAttributeName="service" />
+		<attribute name="otherMails" multi="true" phpAttributeName="mailAlias" phpAttributePFName="mailAliases"/>
+	</object>
+</ldap>

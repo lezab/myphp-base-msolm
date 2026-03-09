@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+	<xsd:element name="ldap">
+		<xsd:complexType>
+			<xsd:sequence>
+				   <xsd:element name="object" minOccurs="1" maxOccurs="unbounded" type="objectType" />
+			</xsd:sequence>
+		   	<xsd:attribute name="host" type="xsd:anyURI" />
+		   	<xsd:attribute name="port" type="xsd:positiveInteger" />
+		   	<xsd:attribute name="bind_dn" type="xsd:normalizedString" />
+		   	<xsd:attribute name="bind_password" type="xsd:normalizedString" />
+		   	<xsd:attribute name="phpNamespace" type="xsd:token" />
+		</xsd:complexType>
+	 </xsd:element>
+	
+	
+	<xsd:complexType name="objectType">
+ 		<xsd:sequence>
+ 			<xsd:element name="attribute" minOccurs="1" maxOccurs="unbounded" type="attributeType" />
+ 		</xsd:sequence>
+ 		<xsd:attribute name="ou" type="dn" use="required"/>
+		<xsd:attribute name="filter" type="xsd:token"/>
+ 		<xsd:attribute name="phpObjectName" type="xsd:token" use="required"/>
+		<xsd:attribute name="phpObjectPFName" type="xsd:token"/>
+ 		<xsd:attribute name="phpManagerName" type="xsd:token"/>
+ 	</xsd:complexType>
+ 	 
+	<xsd:complexType name="attributeType">
+		<xsd:sequence>
+ 			<xsd:element name="reference" minOccurs="0" maxOccurs="1" type="referenceType" />
+ 		</xsd:sequence>
+		<xsd:attribute name="phpAttributeName" type="xsd:token"/>
+ 		<xsd:attribute name="phpAttributePFName" type="xsd:token"/>
+		<xsd:attribute name="name" type="attribute_name" use="required"/>
+		<xsd:attribute name="rdn" type="xsd:boolean"/>
+		<xsd:attribute name="multi" type="xsd:boolean"/>
+		<xsd:attribute name="values" type="xsd:string"/>
+		<xsd:attribute name="value" type="xsd:string"/>
+		<xsd:attribute name="type" type="attribute_type" />
+		<xsd:attribute name="required" type="xsd:boolean"/>
+		<xsd:attribute name="unique" type="xsd:boolean"/>
+		<!-- TODO : voir pour autoIncrement si on ne devrait pas y songer -->
+		<!--xsd:attribute name="autoIncrement" type="xsd:boolean"/-->
+	</xsd:complexType>
+
+
+	<xsd:complexType name="referenceType">
+		<xsd:attribute name="object" type="xsd:token" use="required"/>
+		<xsd:attribute name="attribute" type="attribute_name" use="required"/>
+	</xsd:complexType>
+	
+
+	<xsd:simpleType name="dn">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[\w,-_]+"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="attribute_name">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[\w]+"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="attribute_type">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="integer"/>
+			<xsd:enumeration value="string"/>
+			<xsd:enumeration value="binary"/>
+			<xsd:enumeration value="enum"/>
+			<xsd:enumeration value="constant"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

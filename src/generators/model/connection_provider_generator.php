@@ -1,0 +1,31 @@
+<?php
+fwrite($file, "<?php\n");
+fwrite($file, "namespace $nsp"."core;\n");
+fwrite($file, "\n");
+fwrite($file, "use \\$nsp"."exceptions\\LdapConnectionProviderException;\n");
+fwrite($file, "\n");
+fwrite($file, "class LdapConnectionProvider {\n");
+fwrite($file, "	\n");
+fwrite($file, "	protected static \$ldap;\n");
+fwrite($file, "	\n");
+fwrite($file, "	/**\n");
+fwrite($file, "	 * @throws LdapConnectionProviderException\n");
+fwrite($file, "	 * @return \\MLdap\n");
+fwrite($file, "	 */\n");
+fwrite($file, "	public static function getInstance(){\n");
+fwrite($file, "		if (!isset(self::\$ldap)){\n");
+fwrite($file, "			\n");
+fwrite($file, "			include(__DIR__.\"/__ldap_params.conf.php\");\n");
+fwrite($file, "			\n");
+fwrite($file, "			try {\n");
+fwrite($file, "				self::\$ldap = new \\MLdap(\$ldap_address, \$ldap_port, \$ldap_bind_dn, \$ldap_bind_password);\n");
+fwrite($file, "			}\n");
+fwrite($file, "			catch (\\MLdapException \$e) {\n");
+fwrite($file, "				throw new LdapConnectionProviderException(\$e);\n");
+fwrite($file, "			}\n");
+fwrite($file, "		}\n");
+fwrite($file, "		return self::\$ldap;\n");
+fwrite($file, "	}\n");
+fwrite($file, "}\n");
+fwrite($file, "?>");
+?>
