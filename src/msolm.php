@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 
-$version = "7.0.0";
+$version = "7.1.0";
 
 function version(){
 	global $version;

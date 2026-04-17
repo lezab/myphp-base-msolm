@@ -25,9 +25,10 @@
 ##
 ##	// Class attributes for object management
 ##	protected \$_new = true;
-##	protected \$_modified = false;
 ##	protected \$_deleted = false;
 ##	protected \$_renamed = false;
+##	protected \$_modified = false;
+##	protected \$_modifiedAttributes = array();
 ##
 ##	// Attributes relatives to ldap entry
 ##	protected \$dn = null;
@@ -146,9 +147,8 @@ $rdn_infos = $datas['attributes'][$rdn];
 ##	/**
 ##	 * Due to limitations of php the method is public but can only be used from $nsp$classname class itself or corresponding manager class
 ##	 * You should not use this method.
-##	 * @param \$var boolean
 ##	 */
-##	final public function _setNew(\$var){
+##	final public function _unsetNew(){
 ##		//\$trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
 ##		\$trace = defined('DEBUG_BACKTRACE_IGNORE_ARGS') ? debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2) : debug_backtrace();
 ##		if (! (\$trace[1]['class'] == '$nsp$classname' || \$trace[1]['class'] == '$nsp$manager_classname' || \$trace[1]['class'] == '$namespace\core\\$manager_core_classname')) {
@@ -156,7 +156,7 @@ $rdn_infos = $datas['attributes'][$rdn];
 ##			\$message .= \"You should not use this method.\";
 ##			throw new ".$classname."Exception(\$message);
 ##		}
-##		\$this->_new = \$var;
+##		\$this->_new = false;
 ##	}
 ##
 ##	/**
@@ -168,12 +168,21 @@ $rdn_infos = $datas['attributes'][$rdn];
 ##		return \$this->_modified;
 ##	}
 ##
+##
+##	/**
+##	 * Returns the list of modified attributes.
+##	 * @return array the list of modified attributes.
+##	 */
+##	final public function _getModifiedAttributes(){
+##		return \$this->_modifiedAttributes;
+##	}
+##
+##
 ##	/**
 ##	 * Due to limitations of php the method is public but can only be used from $nsp$classname class itself or corresponding manager class
 ##	 * You should not use this method.
-##	 * @param \$var boolean
 ##	 */
-##	final public function _setModified(\$var){
+##	final public function _resetModified(){
 ##		//\$trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
 ##		\$trace = defined('DEBUG_BACKTRACE_IGNORE_ARGS') ? debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2) : debug_backtrace();
 ##		if (! (\$trace[1]['class'] == '$nsp$classname' || \$trace[1]['class'] == '$nsp$manager_classname' || \$trace[1]['class'] == '$namespace\core\\$manager_core_classname')) {
@@ -181,7 +190,9 @@ $rdn_infos = $datas['attributes'][$rdn];
 ##			\$message .= \"You should not use this method.\";
 ##			throw new ".$classname."Exception(\$message);
 ##		}
-##		\$this->_modified = \$var;
+##		\$this->_modified = false;
+##		\$this->_modifiedAttributes = array();
+##		\$this->_renamed = false;
 ##	}
 ##
 ##	/** Tells if the object has been deleted from  ldap directory or not.
@@ -195,9 +206,8 @@ $rdn_infos = $datas['attributes'][$rdn];
 ##	/**
 ##	 * Due to limitations of php the method is public but can only be used from $nsp$classname class itself or corresponding manager class
 ##	 * You should not use this method.
-##	 * @param \$var boolean
 ##	 */
-##	final public function _setDeleted(\$var){
+##	final public function _setDeleted(){
 ##		//\$trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
 ##		\$trace = defined('DEBUG_BACKTRACE_IGNORE_ARGS') ? debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2) : debug_backtrace();
 ##		if (! (\$trace[1]['class'] == '$nsp$classname' || \$trace[1]['class'] == '$nsp$manager_classname' || \$trace[1]['class'] == '$namespace\core\\$manager_core_classname')) {
@@ -205,7 +215,7 @@ $rdn_infos = $datas['attributes'][$rdn];
 ##			\$message .= \"You should not use this method.\";
 ##			throw new ".$classname."Exception(\$message);
 ##		}
-##		\$this->_deleted = \$var;
+##		\$this->_deleted = true;
 ##	}
 ##
 ##	/** Tells if the object has been renamed or not.
@@ -214,22 +224,6 @@ $rdn_infos = $datas['attributes'][$rdn];
 ##	 */
 ##	final public function _isRenamed(){
 ##		return \$this->_renamed;
-##	}
-##
-##	/**
-##	 * Due to limitations of php the method is public but can only be used from $nsp$classname class itself or corresponding manager class
-##	 * You should not use this method.
-##	 * @param \$var boolean
-##	 */
-##	final public function _setRenamed(\$var){
-##		//\$trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
-##		\$trace = defined('DEBUG_BACKTRACE_IGNORE_ARGS') ? debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2) : debug_backtrace();
-##		if (! (\$trace[1]['class'] == '$nsp$classname' || \$trace[1]['class'] == '$nsp$manager_classname' || \$trace[1]['class'] == '$namespace\core\\$manager_core_classname')) {
-##			\$message  = \"Due to limitations of php the method is public but can only be used from $nsp$manager_classname class\\n\";
-##			\$message .= \"You should not use this method.\";
-##			throw new ".$classname."Exception(\$message);
-##		}
-##		\$this->_renamed = \$var;
 ##	}
 ##
 ##	//---------------------------------------------------
@@ -293,12 +287,14 @@ foreach($datas['attributes'] as $attribute => $infos){
 ##			if(\$shouldReplace){
 ##				\$this->".$infos['attribute_pf_name']." = \$values;
 ##				\$this->_modified = true;
+##				\$this->_modifiedAttributes[] = '".$infos['attribute_pf_name']."';
 ##			}
 ##		}
 ##		else{
 ##			if(! ((count(\$this->".$infos['attribute_pf_name'].") == 1) && (\$this->".$infos['attribute_pf_name']."[0] === \$values))){
 ##				\$this->".$infos['attribute_pf_name']." = array(\$values);
 ##				\$this->_modified = true;
+##				\$this->_modifiedAttributes[] = '".$infos['attribute_pf_name']."';
 ##			}
 ##		}
 ##	}
@@ -307,6 +303,7 @@ foreach($datas['attributes'] as $attribute => $infos){
 ##		if(! in_array(\$value, \$this->".$infos['attribute_pf_name'].")){
 ##			\$this->".$infos['attribute_pf_name']."[] = \$value;
 ##			\$this->_modified = true;
+##			\$this->_modifiedAttributes[] = '".$infos['attribute_pf_name']."';
 ##		}
 ##	}
 ##
@@ -314,6 +311,7 @@ foreach($datas['attributes'] as $attribute => $infos){
 ##		if((\$index = array_search(\$value, \$this->".$infos['attribute_pf_name'].")) !== false){
 ##			array_splice(\$this->".$infos['attribute_pf_name'].", \$index, 1);
 ##			\$this->_modified = true;
+##			\$this->_modifiedAttributes[] = '".$infos['attribute_pf_name']."';
 ##		}
 ##	}
 ##
@@ -352,6 +350,7 @@ foreach($datas['attributes'] as $attribute => $infos){
 ##		if(\$value !== \$this->$attribute){
 ##			\$this->$attribute = \$value;
 ##			\$this->_modified = true;
+##			\$this->_modifiedAttributes[] = '".$infos['attribute_pf_name']."';
 ##		}
 ##	}
 ##

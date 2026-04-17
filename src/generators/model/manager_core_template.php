@@ -238,10 +238,7 @@ foreach($datas['attributes'] as $attribute => $infos){
 ##			\$datas = \$object->getDatas();
 ##			\$ldap_datas = array();
 ##			foreach(\$datas as \$key => \$value){
-##				if((is_array(\$value) && empty(\$value)) || (\$value == null || \$value == \"\")){
-##					unset(\$datas[\$key]);
-##				}
-##				else{
+##				if(! ((is_array(\$value) && empty(\$value)) || (\$value == null || \$value == \"\"))){
 ##					if(isset(self::\$attributesMapping[\$key]) && self::\$attributesMapping[\$key] != \"\"){
 ##						\$ldap_datas[self::\$attributesMapping[\$key]] = \$value;
 ##					}
@@ -249,7 +246,8 @@ foreach($datas['attributes'] as $attribute => $infos){
 ##			}
 ##			\$this->ldap->add(\$object->getDn(), \$ldap_datas);
 ##			\$oid = \$object->get".$this->camelize($rdn)."();
-##			\$object->_setNew(false);
+##			\$object->_unsetNew();
+##			\$object->_resetModified();
 ##		}
 ##		catch(\\Exception \$e){
 ##			throw new ".$manager_classname."Exception(\$e->getMessage(), 2, \$e);
@@ -283,26 +281,26 @@ foreach($datas['attributes'] as $attribute => $infos){
 ##				}
 ##				\$datas = \$object->getDatas();
 ##				// Active Directory does not accept the rdn is part of the attributes passed to modify method even if is equal to the original rdn
+##				// In any case, it has been processed before so we can remove it
 ##				unset(\$datas['$rdn']);
 ##				// Idem but faster than : foreach(\$datas as \$key => \$data){ if(\$data == null)	\$datas[\$key] = array(); }
 ##				\$datas = array_replace(\$datas, array_fill_keys(array_keys(\$datas, null), array()));
 ##				\$ldap_datas = array();
+##				\$modifiedAttributes = \$object->_getModifiedAttributes();
 ##				foreach(\$datas as \$key => \$value){
-##					if(isset(self::\$attributesMapping[\$key]) && self::\$attributesMapping[\$key] != \"\"){
-##						\$ldap_datas[self::\$attributesMapping[\$key]] = \$value;
+##					if(in_array(\$key, \$modifiedAttributes)){
+##						// Only process attributes that have a mapping
+##						if(isset(self::\$attributesMapping[\$key]) && self::\$attributesMapping[\$key] != \"\"){
+##							\$ldap_datas[self::\$attributesMapping[\$key]] = \$value;
+##						}
 ##					}
-##				}
-##				// Active Directory never give the password so the unicodePwd will always be empty unless it was set
-##				// So if it's null it doesn't mean we have to delete it
-##				if(isset(\$ldap_datas['unicodePwd']) && empty(\$ldap_datas['unicodePwd'])){
-##					unset(\$ldap_datas['unicodePwd']);
 ##				}
 ##				\$this->ldap->modify(\$object->getDn(), \$ldap_datas);
 ##			}
 ##			catch(\\Exception \$e){
 ##				throw new ".$manager_classname."Exception(\$e->getMessage(), 2, \$e);
 ##			}
-##			\$object->_setModified(false);
+##			\$object->_resetModified();
 ##		}
 ##	}
 ##
@@ -332,7 +330,7 @@ foreach($datas['attributes'] as $attribute => $infos){
 ##			throw new ".$manager_classname."Exception(\$e->getMessage(), 2, \$e);
 ##		}
 ##
-##		\$object->_setDeleted(true);
+##		\$object->_setDeleted();
 ##	}
 ##
 /** ***************************************************************** */
