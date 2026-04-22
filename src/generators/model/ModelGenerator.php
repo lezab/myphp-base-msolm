@@ -1,7 +1,7 @@
 <?php
 class ModelGenerator extends MGenerator{
 	
-	public $version = '7.1.0';
+	public $version = '7.1.1';
 	
 	public $model_directory;
 	public $model_core_directory;
@@ -47,8 +47,8 @@ class ModelGenerator extends MGenerator{
 	
 	public function run(){
 		
-		echo "Cleaning output directory\n";
-		echo "... \n";
+		echo "Cleaning output directory".PHP_EOL;
+		echo "...".PHP_EOL;
 		
 		$success = true;
 		if($this->update){
@@ -56,7 +56,7 @@ class ModelGenerator extends MGenerator{
 			while($entry = $core_dir->read()) {
 				if(is_file($this->model_directory."core/".$entry) && (substr_compare($entry, ".conf.php", -9) !== 0)){
 					if(! unlink($this->model_directory."core/".$entry)){
-						echo "Fail to delete file ".$this->model_directory."core/".$entry."\n\n";
+						echo "Fail to delete file ".$this->model_directory."core/".$entry.PHP_EOL.PHP_EOL;
 						$success = false;
 					}
 				}
@@ -65,7 +65,7 @@ class ModelGenerator extends MGenerator{
 			while($entry = $exceptions_dir->read()) {
 				if(is_file($this->model_directory."exceptions/".$entry)){
 					if(! unlink($this->model_directory."exceptions/".$entry)){
-						echo "Fail to delete file ".$this->model_directory."exceptions/".$entry."\n\n";
+						echo "Fail to delete file ".$this->model_directory."exceptions/".$entry.PHP_EOL.PHP_EOL;
 						$success = false;
 					}
 				}
@@ -81,7 +81,7 @@ class ModelGenerator extends MGenerator{
 					&& (! in_array($entry, $present_model_files))
 					&& (substr_compare($entry, ".bak", -4) !== 0)){
 					if(! rename($this->model_directory.$entry, $this->model_directory.$entry.".bak")){
-						echo "Fail to rename file ".$this->model_directory.$entry." as ".$this->model_directory.$entry.".bak\n\n";
+						echo "Fail to rename file ".$this->model_directory.$entry." as ".$this->model_directory.$entry.".bak".PHP_EOL.PHP_EOL;
 						$success = false;
 					}
 				}
@@ -93,7 +93,7 @@ class ModelGenerator extends MGenerator{
 				while($entry = $directory->read()) {
 					if(is_file($this->model_directory.$dir_name."/".$entry)){
 						if(! unlink($this->model_directory.$dir_name."/".$entry)){
-							echo "Fail to delete file ".$this->model_directory.$dir_name."/".$entry."\n\n";
+							echo "Fail to delete file ".$this->model_directory.$dir_name."/".$entry.PHP_EOL.PHP_EOL;
 							$success = false;
 						}
 					}
@@ -102,18 +102,18 @@ class ModelGenerator extends MGenerator{
 		}
 		
 		if($success){
-			echo " OK\n";
+			echo " OK".PHP_EOL;
 		}
 		else{
-			echo "FAILED\n";
-			echo "Terminating process\n";
+			echo "FAILED".PHP_EOL;
+			echo "Terminating process".PHP_EOL;
 			exit(0);
 		}
-		echo "\n";
+		echo PHP_EOL;
 		
 		
-		echo "Generating model files\n";
-		echo "... \n";
+		echo "Generating model files".PHP_EOL;
+		echo "...".PHP_EOL;
 		
 		self::compileTemplates("model", $this->templates);
 		
@@ -133,10 +133,10 @@ class ModelGenerator extends MGenerator{
 		//* LdapConnectionProvider                ****
 		//* ******************************************
 		$file = fopen($this->model_core_directory."LdapConnectionProvider.php", "w+");
-		include(__DIR__.'/connection_provider_generator.php');
+		include(__DIR__.'/files_generators/connection_provider_generator.php');
 		fclose($file);
 		$file = fopen($this->model_exceptions_directory."LdapConnectionProviderException.php", "w+");
-		include(__DIR__.'/connection_provider_exception_generator.php');
+		include(__DIR__.'/files_generators/connection_provider_exception_generator.php');
 		fclose($file);
 		
 		if((! $this->update) || (! file_exists($this->model_core_directory."__ldap_params.conf.php"))){
@@ -154,7 +154,7 @@ class ModelGenerator extends MGenerator{
 		/** MSOLM object                          ****/
 		/** ******************************************/
 		$file = fopen($this->model_core_directory."MSOLM.php", "w+");
-		include(__DIR__.'/msolm_object_generator.php');
+		include(__DIR__.'/files_generators/msolm_object_generator.php');
 		fclose($file);
 		
 		
@@ -172,7 +172,7 @@ class ModelGenerator extends MGenerator{
 			$ou = $datas['ou'];
 			$filter = $datas['filter'];
 			
-			echo "\nProcessing : $classname :\n";
+			echo PHP_EOL."Processing : $classname :".PHP_EOL;
 			
 			//* ******************************************
 			//* Object configuration file             ****
@@ -182,7 +182,7 @@ class ModelGenerator extends MGenerator{
 			if((! $this->update) || (! file_exists($this->model_core_directory.$filename))){
 			echo "	generating : $filename\n";
 			$file = fopen($this->model_core_directory.$filename, "w+");
-			include(__DIR__.'/object_conf_generator.php');
+			include(__DIR__.'/files_generators/object_conf_generator.php');
 			fclose($file);
 			}
 			else{
@@ -194,9 +194,9 @@ class ModelGenerator extends MGenerator{
 			//* ******************************************
 			// création du fichier
 			$filename = $core_classname.".php";
-			echo "	generating : $filename\n";
+			echo "	generating : $filename".PHP_EOL;
 			$file = fopen($this->model_core_directory.$filename, "w+");
-			include(__DIR__.'/object_core_generator.php');
+			include(__DIR__.'/files_generators/object_core_generator.php');
 			fclose($file);
 			
 			/** ******************************************/
@@ -204,32 +204,33 @@ class ModelGenerator extends MGenerator{
 			/** ******************************************/
 			// création du fichier
 			$filename = $exception_classname.".php";
-			echo "	generating : $filename\n";
+			echo "	generating : $filename".PHP_EOL;
 			$file = fopen($this->model_exceptions_directory.$filename, "w+");
-			include(__DIR__.'/object_exception_generator.php');
+			include(__DIR__.'/files_generators/object_exception_generator.php');
 			fclose($file);
 			
-			//* ******************************************
-			//* Classe object                         ****
-			//* ******************************************
+			
+			/** ******************************************/
+			/** Classe object                         ****/
+			/** ******************************************/
 			$filename = $classname.".php";
 			if((! $this->update) || (! file_exists($this->model_directory.$filename))){
 				// création du fichier
-				echo "	generating : $filename\n";
+				echo "	generating : $filename".PHP_EOL;
 				$file = fopen($this->model_directory.$filename, "w+");
-				include(__DIR__.'/object_generator.php');
+				include(__DIR__.'/files_generators/object_generator.php');
 				fclose($file);
 			}
 			
 			
-			//* ******************************************
-			//* Classe objectManagerCore              ****
-			//* ******************************************
+			/** ******************************************/
+			/** Classe objectManagerCore              ****/
+			/** ******************************************/
 			// création du fichier
 			$filename = $manager_core_classname.".php";
-			echo "	generating : $filename\n";
+			echo "	generating : $filename".PHP_EOL;
 			$file = fopen($this->model_core_directory.$filename, "w+");
-			include(__DIR__.'/manager_core_generator.php');
+			include(__DIR__.'/files_generators/manager_core_generator.php');
 			fclose($file);
 			
 			/** ******************************************/
@@ -237,25 +238,26 @@ class ModelGenerator extends MGenerator{
 			/** ******************************************/
 			// création du fichier
 			$filename = $manager_exception_classname.".php";
-			echo "	generating : $filename\n";
+			echo "	generating : $filename".PHP_EOL;
 			$file = fopen($this->model_exceptions_directory.$filename, "w+");
-			include(__DIR__.'/manager_exception_generator.php');
+			include(__DIR__.'/files_generators/manager_exception_generator.php');
 			fclose($file);
 			
-			//* ******************************************
-			//* Classe objectManager                  ****
-			//* ******************************************
+			
+			/** ******************************************/
+			/** Classe objectManager                  ****/
+			/** ******************************************/
 			$filename = $manager_classname.".php";
 			if((! $this->update) || (! file_exists($this->model_directory.$filename))){
 				// création du fichier
-				echo "	generating : $filename\n";
+				echo "	generating : $filename".PHP_EOL;
 				$file = fopen($this->model_directory.$filename, "w+");
-				include(__DIR__.'/manager_generator.php');
+				include(__DIR__.'/files_generators/manager_generator.php');
 				fclose($file);
 			}
 		}
 		
-		echo "OK.\n\n";
+		echo "Done.".PHP_EOL.PHP_EOL;
 	}
 	
 	

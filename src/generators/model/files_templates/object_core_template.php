@@ -350,7 +350,7 @@ foreach($datas['attributes'] as $attribute => $infos){
 ##		if(\$value !== \$this->$attribute){
 ##			\$this->$attribute = \$value;
 ##			\$this->_modified = true;
-##			\$this->_modifiedAttributes[] = '".$infos['attribute_pf_name']."';
+##			\$this->_modifiedAttributes[] = '$attribute';
 ##		}
 ##	}
 ##

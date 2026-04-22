@@ -113,11 +113,3 @@ Complete documentation is available at:
 - **English**: https://lezab.github.io/myPhp/en/base/msolm/
 - **Français**: https://lezab.github.io/myPhp/fr/base/msolm/
 
-
-## Changelog
-
-### v7.1.0
-
-Implementation of a `_modifiedAttributes` attribute in objectCore with its management, so that in managerCore::update(), only modified attributes will be taken into account. This solves several problems:
-- unicodePwd in AD (removal of specific processing)
-- operational attributes in OpenLDAP that change even if the sent values are the same (pwdLastSet, modifiedTimestamp, ...)

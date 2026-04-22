@@ -221,9 +221,7 @@ foreach($datas['attributes'] as $attribute => $infos){
 /** ***************************************************************** */
 ##	/**
 ##	 * Inserts a new object in the ldap directory.
-##	 * Related objects are added or modified according the object attributes
 ##	 * @param \$object a $classname object
-##	 * @param \$cascade this parameter should not be used. It exists for internal purpose only.
 ##	 * @return ".$rdn_infos['datatype']['type']." object identifier (rdn)
 ##	 */
 ##	public function add($classname \$object){
@@ -262,9 +260,7 @@ foreach($datas['attributes'] as $attribute => $infos){
 /** ***************************************************************** */
 ##	/**
 ##	 * Updates an existing object in ldap according the modifications done on it.
-##	 * Related objects are added or modified according the object attributes.
 ##	 * @param \$object a $classname object
-##	 * @param \$cascade this parameter should not be used. It exists for internal purpose only.
 ##	 */
 ##	public function update($classname \$object){
 ##		if(\$object->_isNew()){
@@ -311,9 +307,7 @@ foreach($datas['attributes'] as $attribute => $infos){
 /** ***************************************************************** */
 ##	/**
 ##	 * Deletes an existing object in ldap.
-##	 * Related objects are modified according this deletion, but are not deleted.
 ##	 * @param \$object a $classname object
-##	 * @param \$cascade this parameter should not be used. It exists for internal purpose only.
 ##	 */
 ##	public function delete($classname \$object){
 ##		if(\$object->_isNew()){
