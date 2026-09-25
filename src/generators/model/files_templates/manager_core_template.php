@@ -46,7 +46,7 @@
 ##		include(__DIR__.\"/$classname.conf.php\");
 ##		self::\$base = \$ldap_base;
 ##		self::\$filter = \$ldap_filter;
-##		self::\$ldapAttributesList = array_values(\$ldap_attributes_mapping);
+##		self::\$ldapAttributesList = array_filter(array_values(\$ldap_attributes_mapping));
 ##		self::\$attributesMapping = \$ldap_attributes_mapping;
 $rdn = $datas['rdn'];
 $rdn_infos = $datas['attributes'][$rdn];
